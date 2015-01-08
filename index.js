@@ -7,6 +7,8 @@ var yaml = require('js-yaml');
 var indent = require('indent-string');
 
 var projectSlug = 'loomio-1'
+var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
+var localesDir = loomioDir + '/config/locales/'
 
 function getFromTransifex(path) {
 
@@ -61,7 +63,6 @@ function updateLocale(resource, locale) {
   return function(err, res, body) {
     if (err) { throw err; }
     
-    var localesDir = 'config/locales/'
     var correctedLocale = locale.replace('_','-')
     var filename = localesDir + resource.localFilePrefix + correctedLocale + '.yml'
     var refFile = localesDir + resource.localFilePrefix + 'en.yml'
