@@ -201,10 +201,10 @@ function updateStats(locales, callback) {
 function writeStats(err, stats) {
   if (err) { throw err }
 
-  var filename = loomioDir + '/lib/tasks/translation_stats.yaml'
+  var filename = loomioDir + '/lib/tasks/translation_stats.yml'
 
   fs.readFile(filename, function(err, data) {
-    if (err) { throw err; }
+    //if (err) { throw err; }
 
     var oldStats = yaml.safeLoad(data)
     printStatsDiff( oldStats, stats)
