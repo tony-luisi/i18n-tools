@@ -10,6 +10,25 @@ var projectSlug = 'loomio-1'
 var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
 var localesDir = loomioDir + '/' + 'config/locales/'
 
+var resources = [
+  {
+   transifexSlug: 'github-linked-version',
+   localFilePrefix: '',
+   commonName: 'main',
+  },
+  {
+   transifexSlug: 'frontpageenyml',
+   localFilePrefix: 'frontpage.',
+   commonName: 'frontpage',
+  },
+]
+
+function resourcesMap(key) { 
+  return resources.map( function(object) { 
+    return object[key] 
+  })
+}
+
 function getFromTransifex(path) {
 
   var login = {
@@ -30,27 +49,23 @@ function getFromTransifex(path) {
   };
 };
 
-var getLanguageInfo = getFromTransifex('/api/2/project/loomio-1/languages')
 
-getLanguageInfo( function(err, res, body) {
+console.log(green("\nfetching locales list"))
+// get the list of locales Transifex has 
+getFromTransifex('/api/2/project/loomio-1/languages')( function(err, res, body) {
   if (err) { throw err; }
   
   var transifexLocales = JSON.parse(body).map( function(a) { return a['language_code'] })
-  console.log(" Got locale list\n")
+  //transifexLocales = ['he']
+
+  print('  '); print( transifexLocales )  
+  console.log(green("\n\nfetching stats + updating locales\n"))
+  updateStats(transifexLocales, writeStats)
+
   updateLocales(transifexLocales)
 })
 
 function updateLocales(locales) {
-  var resources = [
-    {
-     transifexSlug: 'github-linked-version',
-     localFilePrefix: '',
-    },
-    {
-     transifexSlug: 'frontpageenyml',
-     localFilePrefix: 'frontpage.',
-    },
-  ]
 
   resources.forEach( function(resource) {
     locales.forEach( function(locale) {
@@ -157,4 +172,96 @@ function green(string) { return ("\033[32m"+ string +"\033[0m") }
 function red(string) { return ("\033[31m"+ string +"\033[0m") }
 function blue(string) { return ("\033[36m"+ string +"\033[0m") }
 function bold(string) { return ("\033[101m"+ string +"\033[0m") }
- 
+
+
+//# --- stats updater --- #
+function updateStats(locales, callback) {
+  var doneCount = 0
+  var finalCount = resources.length 
+  var stats = buildEmptyLanguageStats(locales)
+
+  resources.forEach( function(resource) {
+    getFromTransifex("/api/2/project/"+projectSlug+"/resource/"+resource.transifexSlug+"/stats")( function(err, res, body) {
+      if (err) { throw err; }
+
+      var jsonResponse = JSON.parse(body)
+
+      locales.forEach( function(locale) { 
+        stats[locale][resource.commonName] = Number( jsonResponse[locale]['completed'].replace('%','') )
+      })
+
+      //process.stdout.write(green('>'))
+      doneCount++
+      if (doneCount === finalCount) { callback(null, stats) }
+
+    })
+  })
+}
+
+function writeStats(err, stats) {
+  if (err) { throw err }
+
+  var filename = loomioDir + '/lib/tasks/translation_stats.yaml'
+
+  fs.readFile(filename, function(err, data) {
+    if (err) { throw err; }
+
+    var oldStats = yaml.safeLoad(data)
+    printStatsDiff( oldStats, stats)
+  })
+
+  fs.writeFile(filename, yaml.safeDump(stats), function(err) { 
+    if (err) { throw err } 
+  })
+
+}
+
+function printStatsDiff( oldStats, stats ) {
+  var locales = Object.keys(stats)
+  var resources = resourcesMap('commonName')
+  var colZero = 12
+  var colN = 20
+
+  print(blue(pad('  locale',colZero)));
+  resources.forEach( function(resource) { print(blue(pad(resource,colN))) } )
+  print("\n")
+    
+  locales.forEach( function(locale) {
+    print(pad('  '+locale,colZero))
+    resources.forEach( function(resource) { 
+      var percent = stats[locale][resource]
+      var oldPercent = oldStats[locale][resource]
+
+      // in the future would be good to also compare 'last updated_at'
+      if (percent > oldPercent) {
+        print(green(pad(percent,colN))) 
+      } else {
+        print(pad(percent,colN)) 
+      }
+    }) 
+    print("\n")
+  })
+
+}
+
+function print(string) {
+  string = string.toString()
+  process.stdout.write(string)
+}
+
+function pad(string, finalWidth) {
+  string = string.toString()
+  if (string.length > finalWidth) {
+    return string
+  }
+  return string + Array(finalWidth+1-string.length).join(' ')
+} 
+
+function buildEmptyLanguageStats(locales) {
+  var stats = {}
+
+  locales.forEach( function(locale) {
+    stats[locale] = {} 
+  })
+  return stats
+}

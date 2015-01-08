@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ `git branch | grep translations-update` ]
+if [[ `git branch | grep translations-update` ]]
 then
   echo "a branch called translations-update already exists"
   git branch -D translations-update
