@@ -8,7 +8,7 @@ var indent = require('indent-string');
 
 var projectSlug = 'loomio-1'
 var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
-var localesDir = loomioDir + '/config/locales/'
+var localesDir = loomioDir + '/' + 'config/locales/'
 
 function getFromTransifex(path) {
 
