@@ -211,18 +211,19 @@ function writeStats(err, stats) {
 
     var oldStats = yaml.safeLoad(data)
     printStatsDiff( oldStats, stats)
-    
-    fs.writeFile(filename, yaml.safeDump(stats), function(err) { 
-      if (err) { throw err } 
-    })
   })
+
+  fs.writeFile(filename, yaml.safeDump(stats), function(err) { 
+    if (err) { throw err } 
+  })
+
 }
 
 function printStatsDiff( oldStats, stats ) {
   var locales = Object.keys(stats)
   var resources = resourcesMap('commonName')
   var colZero = 12
-  var colN = 70
+  var colN = 20
 
   print(blue(pad('  locale',colZero)));
   resources.forEach( function(resource) { print(blue(pad(resource,colN))) } )
@@ -236,33 +237,14 @@ function printStatsDiff( oldStats, stats ) {
 
       // in the future would be good to also compare 'last updated_at'
       if (percent > oldPercent) {
-        print(green(pad( progressBar(oldPercent, percent) ,colN))) 
+        print(green(pad(percent,colN))) print( oldPercent )
       } else {
-        print(pad( progressBar(oldPercent, percent) ,colN))
+        print(pad(percent,colN)) 
       }
     }) 
     print("\n")
   })
 
-}
-
-function progressBar(oldPercent, percent) {
-  var symbol = '>'
-  var newSymbol = '+'
-  var ends = ['(', ')']
-
-  var percentDiff = percent - oldPercent
-
-  if (percentDiff % 2 === 0) {
-    var oldChunk = Array(Math.round(oldPercent/2)+1).join(symbol)
-  } else {
-    var oldChunk = Array(Math.round(oldPercent/2-0.5)+1).join(symbol)
-  }
-
-  var newChunk = Array(Math.round(percentDiff/2)+1).join(newSymbol)
-  var emptyChunk = Array( 50 - (oldChunk + newChunk).length +1).join(' ') 
-
-  return ends[0] + oldChunk + newChunk + emptyChunk + ends[1]
 }
 
 function print(string) {
@@ -275,7 +257,7 @@ function pad(string, finalWidth) {
   if (string.length > finalWidth) {
     return string
   }
-  return string + Array(finalWidth-string.length+1).join(' ')
+  return string + Array(finalWidth+1-string.length).join(' ')
 } 
 
 function buildEmptyLanguageStats(locales) {
