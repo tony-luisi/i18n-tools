@@ -5,6 +5,7 @@ var fs = require('fs');
 var flatten = require('flat');
 var yaml = require('js-yaml');
 var indent = require('indent-string');
+var sortObj = require('sort-object');
 
 var projectSlug = 'loomio-1'
 var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
@@ -201,7 +202,7 @@ function updateStats(locales, callback) {
 function writeStats(err, stats) {
   if (err) { throw err }
 
-  var filename = loomioDir +'/'+ '.translation_stats.yml'
+  var filename = loomioDir +'/'+ '.translation_coverage.yml'
 
   fs.readFile(filename, function(err, data) {
     if (err) { 
@@ -211,8 +212,9 @@ function writeStats(err, stats) {
 
     var oldStats = yaml.safeLoad(data)
     printStatsDiff( oldStats, stats)
-    
-    fs.writeFile(filename, yaml.safeDump(stats), function(err) { 
+   
+    var sortedStats = sortObj(stats)
+    fs.writeFile(filename, yaml.safeDump(sortedStats), function(err) { 
       if (err) { throw err } 
     })
   })
@@ -247,7 +249,7 @@ function printStatsDiff( oldStats, stats ) {
 }
 
 function progressBar(oldPercent, percent) {
-  var symbol = '>'
+  var symbol = '▍'
   var newSymbol = '+'
   var ends = ['(', ')']
 

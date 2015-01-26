@@ -9,8 +9,5 @@ fi
 git checkout -b translations-update
 node ~/projects/i18n-tools ~/projects/loomio
 
-echo '' 
-git add .
-git commit -m 'translations update'
+echo 'DONE'
 
-echo 'done'
