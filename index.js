@@ -129,9 +129,13 @@ function checkInterpolation(args) {
   var localeMatch = localeValue.match(regex)
 
   if (match === null) {return}
-  if (localeMatch === null) {throw localeKey}
+  if (localeMatch === null) {
+    niceLog( {locale: locale, key: key, value: value, localeKey: localeKey, localeValue: localeValue, resource: resource, regex: regex} )
+    return
+  }
+  //
 
-  //note we interpolation keys are not order dependent, so we normalise by .sort()'ing
+  //note interpolation keys are not order dependent, so we normalise by .sort()'ing
   if ( (match.sort().join(':') !== localeMatch.sort().join(':'))
     && (skipKeys.indexOf(key) === -1) ){
       niceLog( {locale: locale, key: key, value: value, localeKey: localeKey, localeValue: localeValue, resource: resource, regex: regex} )
