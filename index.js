@@ -6,6 +6,7 @@ var flatten = require('flat');
 var yaml = require('js-yaml');
 var indent = require('indent-string');
 var sortObj = require('sort-object');
+var style = require('fontStyle');
 
 var projectSlug = 'loomio-1'
 var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
@@ -51,7 +52,7 @@ function getFromTransifex(path) {
 };
 
 
-console.log(green("\nfetching locales list"))
+console.log(style.green("\nfetching locales list"))
 // get the list of locales Transifex has 
 getFromTransifex('/api/2/project/loomio-1/languages')( function(err, res, body) {
   if (err) { throw err; }
@@ -60,7 +61,7 @@ getFromTransifex('/api/2/project/loomio-1/languages')( function(err, res, body) 
   //transifexLocales = ['he']
 
   print('  '); print( transifexLocales )  
-  console.log(green("\n\nfetching stats + updating locales\n"))
+  console.log(style.green("\n\nfetching stats + updating locales\n"))
   updateStats(transifexLocales, writeStats)
 
   updateLocales(transifexLocales)
@@ -112,8 +113,8 @@ function updateLocale(resource, locale) {
     fs.writeFile(filename, yaml.safeDump(transifexTranslations), function(err) {
       if (err) { throw err; }
 
-      //process.stdout.write(green(locale)+' ')
-      process.stdout.write(green('.'))
+      //process.stdout.write(style.green(locale)+' ')
+      process.stdout.write(style.green('.'))
     })
 
   }
@@ -165,19 +166,13 @@ function niceLog(args) {
   var locale= args.locale, key= args.key, value= args.value, localeKey= args.localeKey, localeValue= args.localeValue, resource= args.resource, regex= args.regex;
   var correctedLocale = locale.replace('_','-')
 
-  console.log( indent(red(localeKey) + " : " + blue("https://www.transifex.com/projects/p/" +projectSlug+ "/translate/#" +locale+ "/" +resource.transifexSlug+ "/?key=" +key.substr(3)),  ' ', 2) )
-  process.stdout.write( indent(bold("["+correctedLocale+"]"), ' ', 4) )
-  console.log( indent(localeValue, ' ', 2).replace(regex,green) )
+  console.log( indent(style.red(localeKey) + " : " + style.blue("https://www.transifex.com/projects/p/" +projectSlug+ "/translate/#" +locale+ "/" +resource.transifexSlug+ "/?key=" +key.substr(3)),  ' ', 2) )
+  process.stdout.write( indent(style.bold("["+correctedLocale+"]"), ' ', 4) )
+  console.log( indent(localeValue, ' ', 2).replace(regex,style.green) )
   process.stdout.write( indent("[en]", ' ', 4) )
-  console.log( indent(value, ' ', 2).replace(regex,green) )
+  console.log( indent(value, ' ', 2).replace(regex,style.green) )
   console.log('')
 }
-
-function green(string) { return ("\033[32m"+ string +"\033[0m") }
-function red(string) { return ("\033[31m"+ string +"\033[0m") }
-function blue(string) { return ("\033[36m"+ string +"\033[0m") }
-function bold(string) { return ("\033[101m"+ string +"\033[0m") }
-
 
 //# --- stats updater --- #
 function updateStats(locales, callback) {
@@ -195,7 +190,7 @@ function updateStats(locales, callback) {
         stats[locale][resource.commonName] = Number( jsonResponse[locale]['completed'].replace('%','') )
       })
 
-      //process.stdout.write(green('>'))
+      //process.stdout.write(style.green('>'))
       doneCount++
       if (doneCount === finalCount) { callback(null, stats) }
 
@@ -230,8 +225,8 @@ function printStatsDiff( oldStats, stats ) {
   var colZero = 12
   var colN = 70
 
-  print(blue(pad('  locale',colZero)));
-  resources.forEach( function(resource) { print(blue(pad(resource,colN))) } )
+  print(style.blue(pad('  locale',colZero)));
+  resources.forEach( function(resource) { print(style.blue(pad(resource,colN))) } )
   print("\n")
     
   locales.forEach( function(locale) {
@@ -242,7 +237,7 @@ function printStatsDiff( oldStats, stats ) {
 
       // in the future would be good to also compare 'last updated_at'
       if (percent > oldPercent) {
-        print(green(pad( progressBar(oldPercent, percent) ,colN))) 
+        print(style.green(pad( progressBar(oldPercent, percent) ,colN))) 
       } else {
         print(pad( progressBar(oldPercent, percent) ,colN))
       }
