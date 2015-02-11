@@ -1,13 +1,15 @@
-var http = require('http');
-var Url = require('url');
+var http    = require('http');
+var Url     = require('url');
 var request = require('request');
-var fs = require('fs');
+var fs      = require('fs');
 var flatten = require('flat');
-var yaml = require('js-yaml');
-var indent = require('indent-string');
+var yaml    = require('js-yaml');
 var sortObj = require('sort-object');
-var style = require('fontStyle');
-var check = require('checkers');
+
+// my mini modules
+var style   = require('./fontStyle');
+var check   = require('./checkers');
+var niceLog = require('./niceLog');
 
 var projectSlug = 'loomio-1'
 var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
@@ -121,17 +123,6 @@ function updateLocale(resource, locale) {
   }
 }
 
-function niceLog(args) {
-  var locale= args.locale, key= args.key, value= args.value, localeKey= args.localeKey, localeValue= args.localeValue, resource= args.resource, regex= args.regex;
-  var correctedLocale = locale.replace('_','-')
-
-  console.log( indent(style.red(localeKey) + " : " + style.blue("https://www.transifex.com/projects/p/" +projectSlug+ "/translate/#" +locale+ "/" +resource.transifexSlug+ "/?key=" +key.substr(3)),  ' ', 2) )
-  process.stdout.write( indent(style.bold("["+correctedLocale+"]"), ' ', 4) )
-  console.log( indent(localeValue, ' ', 2).replace(regex,style.green) )
-  process.stdout.write( indent("[en]", ' ', 4) )
-  console.log( indent(value, ' ', 2).replace(regex,style.green) )
-  console.log('')
-}
 
 //# --- stats updater --- #
 function updateStats(locales, callback) {
