@@ -137,7 +137,7 @@ function updateStats(locales, callback) {
       var jsonResponse = JSON.parse(body)
 
       locales.forEach( function(locale) { 
-        stats[locale][resource.commonName] = Number( jsonResponse[locale]['completed'].replace('%','') )
+        stats[locale.replace('_','-')][resource.commonName] = Number( jsonResponse[locale]['completed'].replace('%','') )
       })
 
       //process.stdout.write(style.green('>'))
@@ -160,7 +160,16 @@ function writeStats(err, stats) {
     }
 
     var oldStats = yaml.safeLoad(data)
-    printStatsDiff( oldStats, stats)
+
+    var loomioI18nYaml = loomioDir +'/config/loomio_i18n.yml'
+    fs.readFile(loomioI18nYaml, function(err, data) {
+      if (err) { console.error(err)
+        return 
+      }
+      var liveLocales = yaml.safeLoad(data).loomio_i18n.selectable_locales
+
+      printStatsDiff( oldStats, stats, liveLocales )
+    })
    
     var sortedStats = sortObj(stats)
     fs.writeFile(filename, yaml.safeDump(sortedStats), function(err) { 
@@ -169,29 +178,39 @@ function writeStats(err, stats) {
   })
 }
 
-function printStatsDiff( oldStats, stats ) {
+function printStatsDiff( oldStats, stats, liveLocales ) {
   var locales = Object.keys(stats)
   var resources = resourcesMap('commonName')
   var colZero = 12
-  var colN = 70
-
+  var colN = 60
+  var liveThreshold = 80
+  
   print(style.blue(pad('  locale',colZero)));
   resources.forEach( function(resource) { print(style.blue(pad(resource,colN))) } )
   print("\n")
     
   locales.forEach( function(locale) {
+    locale = locale.replace('_','-')
     print(pad('  '+locale,colZero))
+
+    var upgrade = 0;
     resources.forEach( function(resource) { 
       var percent = stats[locale][resource]
       var oldPercent = oldStats[locale][resource]
 
+      // this is a hideous equivalent it !includes?(locale)
+      if (resource == 'main' && percent > liveThreshold && liveLocales.indexOf(locale)==-1 ) { upgrade++ }
+
       // in the future would be good to also compare 'last updated_at'
       if (percent > oldPercent) {
-        print(style.green(pad( progressBar(oldPercent, percent) ,colN))) 
+        var msg = style.green(pad( progressBar(oldPercent, percent) ,colN)) 
       } else {
-        print(pad( progressBar(oldPercent, percent) ,colN))
+        var msg = pad( progressBar(oldPercent, percent) ,colN)
       }
-    }) 
+      print(msg)
+    })
+    
+    if (upgrade > 0) { print( style.green('UPGRADE')) } 
     print("\n")
   })
 
@@ -233,7 +252,7 @@ function buildEmptyLanguageStats(locales) {
   var stats = {}
 
   locales.forEach( function(locale) {
-    stats[locale] = {} 
+    stats[locale.replace('_','-')] = {} 
   })
   return stats
 }
