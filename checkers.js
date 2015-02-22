@@ -1,3 +1,5 @@
+var niceLog = require('./niceLog');
+
 module.exports = {
   'interpolation': function checkInterpolation(args) {
     var locale= args.locale, resource= args.resource, key= args.key, value= args.value, localeKey= args.localeKey, localeValue= args.localeValue;

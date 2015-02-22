@@ -9,7 +9,6 @@ var sortObj = require('sort-object');
 // my mini modules
 var style   = require('./fontStyle');
 var check   = require('./checkers');
-var niceLog = require('./niceLog');
 
 var projectSlug = 'loomio-1'
 var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
