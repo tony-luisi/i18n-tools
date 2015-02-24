@@ -169,8 +169,12 @@ function writeStats(err, stats) {
 
       printStatsDiff( oldStats, stats, liveLocales )
     })
-   
+  
     var sortedStats = sortObj(stats)
+    Object.keys(sortedStats).forEach( function(locale) {
+      sortedStats[locale] = sortObj(sortedStats[locale])
+    })
+
     fs.writeFile(filename, yaml.safeDump(sortedStats), function(err) { 
       if (err) { throw err } 
     })
