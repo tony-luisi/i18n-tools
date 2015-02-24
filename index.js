@@ -1,5 +1,4 @@
 var http    = require('http');
-var Url     = require('url');
 var request = require('request');
 var fs      = require('fs');
 var flatten = require('flat');
@@ -7,25 +6,15 @@ var yaml    = require('js-yaml');
 var sortObj = require('sort-object');
 
 // my mini modules
-var style   = require('./fontStyle');
-var check   = require('./checkers');
+var style            = require('./fontStyle');
+var check            = require('./checkers');
+var getFromTransifex = require('./getFromTransifex');
 
-var projectSlug = 'loomio-1'
-var loomioDir = process.argv[2] || '/home/mix/projects/loomio'
-var localesDir = loomioDir + '/' + 'config/locales/'
-
-var resources = [
-  {
-   transifexSlug: 'github-linked-version',
-   localFilePrefix: '',
-   commonName: 'main',
-  },
-  {
-   transifexSlug: 'frontpageenyml',
-   localFilePrefix: 'frontpage.',
-   commonName: 'frontpage',
-  },
-]
+var config  = require('./config');
+  var projectSlug = config.projectSlug;
+  var loomioDir   = config.loomioDir;
+  var localesDir  = config.localesDir;
+  var resources   = config.resources;
 
 function resourcesMap(key) { 
   return resources.map( function(object) { 
@@ -33,28 +22,9 @@ function resourcesMap(key) {
   })
 }
 
-function getFromTransifex(path) {
-
-  var login = {
-    username: process.env.TRANSIFEX_USERNAME,
-    password: process.env.TRANSIFEX_PASSWORD,
-  }
-
-  return function(callback) {
-    request({
-      method: "get",
-      url: Url.format({
-        protocol: "http",
-        hostname: "www.transifex.com",
-        pathname: path,
-      }),
-      auth: login,
-    }, callback);
-  };
-};
-
 
 console.log(style.green("\nfetching locales list"))
+//
 // get the list of locales Transifex has 
 getFromTransifex('/api/2/project/loomio-1/languages')( function(err, res, body) {
   if (err) { throw err; }
