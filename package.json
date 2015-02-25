@@ -4,6 +4,7 @@
   "description": "locales for Loomio",
   "main": "index.js",
   "scripts": {
+    "start": "node run index.js",
     "hello": "echo \"hello!\"",
     "yaml": "js-yaml -h",
     "test": "echo \"Error: no test specified\" && exit 1"
