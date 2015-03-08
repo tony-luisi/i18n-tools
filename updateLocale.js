@@ -29,7 +29,7 @@ module.exports = function updateLocale(resource, locale) {
       var flatTransifexTranslations = flatten(transifexTranslations)
      
       Object.keys(flatRefTranslations).forEach( function(key) {
-        var localeKey = key.replace(/^en/', correctedLocale)
+        var localeKey = key.replace(/^en/, correctedLocale)
 
         var value = flatRefTranslations[key]
         var localeValue = flatTransifexTranslations[localeKey]
