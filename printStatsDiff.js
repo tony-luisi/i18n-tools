@@ -56,7 +56,11 @@ function progressBar(oldPercent, percent) {
     var oldChunk = Array(Math.round(oldPercent/2-0.5)+1).join(symbol)
   }
 
-  var newChunk = Array(Math.round(percentDiff/2)+1).join(newSymbol)
+  if (percentDiff < 0) {
+    var newChunk = []
+  } else {
+    var newChunk = Array(Math.round(percentDiff/2)+1).join(newSymbol)
+  }
   var emptyChunk = Array( 50 - (oldChunk + newChunk).length +1).join(' ') 
 
   return ends[0] + oldChunk + newChunk + emptyChunk + ends[1]
