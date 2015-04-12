@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if [[ `git branch | grep translations-update` ]]
+if [[ `git branch | grep locales-update` ]]
 then
-  echo "a branch called translations-update already exists"
-  git branch -D translations-update
+  echo "a branch called locales-update already exists"
+  git branch -D locales-update
 fi
 
-git checkout -b translations-update
+git checkout -b locales-update
 node ~/projects/i18n-tools ~/projects/loomio
 
 echo 'DONE'

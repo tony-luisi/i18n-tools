@@ -12,6 +12,11 @@ module.exports = {
      commonName: 'main',
     },
     {
+     transifexSlug: 'help-docs',
+     localFilePrefix: 'help.',
+     commonName: 'help docs',
+    },
+    {
      transifexSlug: 'frontpageenyml',
      localFilePrefix: 'frontpage.',
      commonName: 'frontpage',

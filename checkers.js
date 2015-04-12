@@ -34,11 +34,13 @@ module.exports = {
     var localeMatch = localeValue.match(regex)
 
     if (match === null) {return}
-    if (localeMatch === null) {throw localeKey}
 
     //note we don't sort keys because html is order dep. this could be trickier with some languages
-    if ( (match.join(':') !== localeMatch.join(':'))
-      && (skipKeys.indexOf(key) === -1) ){
+    if ( localeMatch === null ||                        // if there are not keys in the translation
+        ( match.join(':') !== localeMatch.join(':')     // if the keys in en and in the translation are different
+            && skipKeys.indexOf(key) === -1 )           // and the key is not in the list of keys to skip D: 
+       ){
+       
         niceLog( {locale: locale, key: key, value: value, localeKey: localeKey, localeValue: localeValue, resource: resource, regex: regex} )
     }
   },
