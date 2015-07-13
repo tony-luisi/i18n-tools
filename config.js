@@ -7,9 +7,14 @@ module.exports = {
 
   'resources': [
     {
+     transifexSlug: 'main-app-loomio-10',
+     localFilePrefix: 'client.',
+     commonName: 'main',
+    },
+    {
      transifexSlug: 'github-linked-version',
      localFilePrefix: '',
-     commonName: 'main',
+     commonName: 'main (old)',
     },
     {
      transifexSlug: 'help-docs',
