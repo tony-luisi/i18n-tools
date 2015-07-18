@@ -9,12 +9,12 @@ module.exports = {
     {
      transifexSlug: 'main-app-loomio-10',
      localFilePrefix: 'client.',
-     commonName: 'main',
+     commonName: 'main_1_0',
     },
     {
      transifexSlug: 'github-linked-version',
      localFilePrefix: '',
-     commonName: 'main (old)',
+     commonName: 'main',
     },
     {
      transifexSlug: 'help-docs',

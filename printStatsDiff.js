@@ -9,7 +9,7 @@ module.exports = function printStatsDiff( oldStats, stats, liveLocales ) {
   var locales = Object.keys(sortObj(stats))
   var resources = resourcesMap('commonName')
   var colZero = 12
-  var colN = 60
+  var colN = 40
   var liveThreshold = 80
   
   print(style.blue(style.pad('  locale',colZero)));
@@ -47,21 +47,24 @@ function progressBar(oldPercent, percent) {
   var symbol = '▍'
   var newSymbol = '+'
   var ends = ['(', ')']
+  var dividor = 4
 
   var percentDiff = percent - oldPercent
 
-  if (percentDiff % 2 === 0) {
-    var oldChunk = Array(Math.round(oldPercent/2)+1).join(symbol)
+  if (percentDiff % dividor === 0) {
+    var oldChunk = Array(Math.round(oldPercent/dividor)+1).join(symbol)
   } else {
-    var oldChunk = Array(Math.round(oldPercent/2-0.5)+1).join(symbol)
+    //this is miscy
+    var oldChunk = Array(Math.round(oldPercent/dividor-1/dividor)+1).join(symbol)
   }
 
   if (percentDiff < 0) {
     var newChunk = []
   } else {
-    var newChunk = Array(Math.round(percentDiff/2)+1).join(newSymbol)
+    var newChunk = Array(Math.round(percentDiff/dividor)+1).join(newSymbol)
   }
-  var emptyChunk = Array( 50 - (oldChunk + newChunk).length +1).join(' ') 
+  //this 40 should be extracted (same as one at top of file 
+  var emptyChunk = Array( 40 - (oldChunk + newChunk).length +1).join(' ') 
 
   return ends[0] + oldChunk + newChunk + emptyChunk + ends[1]
 }
