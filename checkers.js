@@ -4,7 +4,7 @@ module.exports = {
   'interpolation': function checkInterpolation(args) {
     var locale= args.locale, resource= args.resource, key= args.key, value= args.value, localeKey= args.localeKey, localeValue= args.localeValue;
     
-    var regex = /%{[^{}]*}/gm
+    var regex = /%?{+[^{}]+}+/gm
     var skipKeys = ["en.invitation.invitees_placeholder",]
 
     var match = value.match(regex)

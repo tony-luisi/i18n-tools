@@ -9,11 +9,11 @@ module.exports = function printStatsDiff( oldStats, stats, liveLocales ) {
   var locales = Object.keys(sortObj(stats))
   var resources = resourcesMap('commonName')
   var colZero = 12
-  var colN = 40
+  var colWidth = 40
   var liveThreshold = 80
   
   print(style.blue(style.pad('  locale',colZero)));
-  resources.forEach( function(resource) { print(style.blue(style.pad(resource,colN))) } )
+  resources.forEach( function(resource) { print(style.blue(style.pad(resource,colWidth))) } )
   print("\n")
     
   locales.forEach( function(locale) {
@@ -22,17 +22,18 @@ module.exports = function printStatsDiff( oldStats, stats, liveLocales ) {
 
     var upgrade = 0;
     resources.forEach( function(resource) { 
-      var percent = stats[locale][resource]
-      var oldPercent = oldStats[locale][resource]
+      var percent = stats[locale][resource] || 0
+      var oldPercent = oldStats[locale][resource] || 0
 
       // this is a hideous equivalent it !includes?(locale)
       if (resource == 'main' && percent > liveThreshold && liveLocales.indexOf(locale)==-1 ) { upgrade++ }
+      if (resource == 'main_1_0' && percent > liveThreshold && liveLocales.indexOf(locale)==-1 ) { upgrade++ }
 
       // in the future would be good to also compare 'last updated_at'
       if (percent > oldPercent) {
-        var msg = style.green(style.pad( progressBar(oldPercent, percent) ,colN)) 
+        var msg = style.green(style.pad( progressBar(oldPercent, percent, colWidth), colWidth)) 
       } else {
-        var msg = style.pad( progressBar(oldPercent, percent) ,colN)
+        var msg = style.pad( progressBar(oldPercent, percent, colWidth), colWidth)
       }
       print(msg)
     })
@@ -43,7 +44,7 @@ module.exports = function printStatsDiff( oldStats, stats, liveLocales ) {
 
 }
 
-function progressBar(oldPercent, percent) {
+function progressBar(oldPercent, percent, width) {
   var symbol = '▍'
   var newSymbol = '+'
   var ends = ['(', ')']
@@ -51,20 +52,15 @@ function progressBar(oldPercent, percent) {
 
   var percentDiff = percent - oldPercent
 
-  if (percentDiff % dividor === 0) {
-    var oldChunk = Array(Math.round(oldPercent/dividor)+1).join(symbol)
-  } else {
-    //this is miscy
-    var oldChunk = Array(Math.round(oldPercent/dividor-1/dividor)+1).join(symbol)
-  }
+  var oldChunk = Array(Math.round(oldPercent/100*width)).join(symbol)
 
   if (percentDiff < 0) {
     var newChunk = []
   } else {
-    var newChunk = Array(Math.round(percentDiff/dividor)+1).join(newSymbol)
+    var newChunk = Array(Math.round(percentDiff/100*width)+1).join(newSymbol)
   }
-  //this 40 should be extracted (same as one at top of file 
-  var emptyChunk = Array( 40 - (oldChunk + newChunk).length +1).join(' ') 
+
+  var emptyChunk = Array( width - (oldChunk + newChunk).length ).join(' ') 
 
   return ends[0] + oldChunk + newChunk + emptyChunk + ends[1]
 }
