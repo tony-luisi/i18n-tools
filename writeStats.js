@@ -10,9 +10,15 @@ var config         = require('./config')
 module.exports = function writeStats(err, stats) {
   if (err) { throw err }
 
-  var filename = loomioDir +'/'+ '.translation_coverage.yml'
+  var coverageFilename = loomioDir +'/'+ '.translation_coverage.yml'
+  var updatedAtFilename   = loomioDir +'/'+ '.translation_updated_at.yml'
+  var updatedAtStats = { updated_at: (new Date).getTime() }
 
-  fs.readFile(filename, function(err, data) {
+  fs.writeFile(updatedAtFilename, yaml.safeDump( updatedAtStats ), function(err) { 
+    if (err) { throw err } 
+  })
+
+  fs.readFile(coverageFilename, function(err, data) {
     if (err) { 
       console.error(err)
       return 
@@ -35,7 +41,7 @@ module.exports = function writeStats(err, stats) {
       sortedStats[locale] = sortObj(sortedStats[locale])
     })
 
-    fs.writeFile(filename, yaml.safeDump(sortedStats), function(err) { 
+    fs.writeFile(coverageFilename, yaml.safeDump(sortedStats), function(err) { 
       if (err) { throw err } 
     })
   })

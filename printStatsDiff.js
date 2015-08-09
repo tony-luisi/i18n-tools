@@ -45,7 +45,7 @@ module.exports = function printStatsDiff( oldStats, stats, liveLocales ) {
 }
 
 function progressBar(oldPercent, percent, width) {
-  var symbol = '▍'
+  var symbol = '-'
   var newSymbol = '+'
   var ends = ['(', ')']
   var dividor = 4

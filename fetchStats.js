@@ -16,6 +16,11 @@ module.exports = function fetchStats(locales, callback) {
       var jsonResponse = JSON.parse(body)
 
       locales.forEach( function(locale) { 
+        if (jsonResponse[locale] == null) { 
+          console.log('transifex reporting locale presenet but no stats:', locale) 
+          return 
+        }
+
         stats[locale.replace('_','-')][resource.commonName] = Number( jsonResponse[locale]['completed'].replace('%','') )
       })
 
