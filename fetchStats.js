@@ -13,6 +13,11 @@ module.exports = function fetchStats(locales, callback) {
     getFromTransifex("/api/2/project/"+projectSlug+"/resource/"+resource.transifexSlug+"/stats")( function(err, res, body) {
       if (err) { throw err; }
 
+      if (body === "Not Found" ) {
+        console.log("api/2/project/"+projectSlug+"/resource/"+resource.transifexSlug+"/stats  --  responding 'Not Found'")
+        return
+      } 
+
       var jsonResponse = JSON.parse(body)
 
       locales.forEach( function(locale) { 

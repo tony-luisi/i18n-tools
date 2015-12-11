@@ -10,7 +10,16 @@ var config  = require('./config');
 
 module.exports = function updateLocale(resource, locale) {
   return function(err, res, body) {
-    if (err) { throw err; }
+    if (err) { 
+      //throw err; 
+      console.log(err)
+      return
+    }
+
+    if (body === "Not Found" ) {
+      console.log(locale + " -- responding 'Not Found'")
+      return
+    } 
     
     var correctedLocale = locale.replace('_','-')
     var filename = localesDir + resource.localFilePrefix + correctedLocale + '.yml'

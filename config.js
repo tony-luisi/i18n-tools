@@ -11,16 +11,16 @@ module.exports = {
      localFilePrefix: 'client.',
      commonName: 'main_1_0',
     },
-    {
-     transifexSlug: 'github-linked-version',
-     localFilePrefix: '',
-     commonName: 'main',
-    },
-    {
-     transifexSlug: 'help-docs',
-     localFilePrefix: 'help.',
-     commonName: 'help docs',
-    },
+    //{
+     //transifexSlug: 'github-linked-version',
+     //localFilePrefix: '',
+     //commonName: 'main',
+    //},
+    //{
+     //transifexSlug: 'help-docs',
+     //localFilePrefix: 'help.',
+     //commonName: 'help docs',
+    //},
     {
      transifexSlug: 'frontpageenyml',
      localFilePrefix: 'frontpage.',
