@@ -11,6 +11,11 @@ module.exports = {
      localFilePrefix: 'client.',
      commonName: 'main_1_0',
     },
+    {
+     transifexSlug: 'server',
+     localFilePrefix: 'server.',
+     commonName: 'server',
+    },
     //{
      //transifexSlug: 'github-linked-version',
      //localFilePrefix: '',
